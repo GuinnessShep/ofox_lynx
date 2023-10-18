@@ -1,0 +1,46 @@
+name: Build Recovery Image
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Recovery
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Setup Build Environment
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y [YOUR DEPENDENCIES HERE]
+        # Setup other build environment prerequisites, such as repo
+
+    - name: Sync Source
+      run: |
+        # If you need to sync other repositories or setup other tools, do it here
+        repo init [YOUR REPO INIT ARGS]
+        repo sync
+
+    - name: Extract Files (Optional)
+      run: |
+        cd device/google/lynx
+        ./extract-files.sh
+
+    - name: Initialize Build Environment
+      run: |
+        source build/envsetup.sh
+        source device/google/lynx/vendorsetup.sh
+
+    - name: Build Recovery Image
+      run: |
+        lunch lynx-eng
+        mka recoveryimage
+
+    - name: Upload Recovery Image
+      uses: actions/upload-artifact@v2
+      with:
+        name: recovery-image
+        path: out/target/product/lynx/recovery.img

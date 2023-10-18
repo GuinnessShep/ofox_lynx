@@ -43,7 +43,7 @@ jobs:
 
       - name: Sync Source Code
         run: |
-          repo init -u https://android.googlesource.com/platform/manifest -b Android-13
+          repo init -u https://android.googlesource.com/platform/manifest
           repo sync -j8
 
       - name: Build Recovery Image

@@ -46,7 +46,7 @@ jobs:
           mka recoveryimage
 
       - name: Upload Recovery Image
-        uses: actions/upload-artifact@v3.1
+        uses: actions/upload-artifact@v3.1.3
         with:
           name: recovery-image
           path: out/target/product/lynx/recovery.img

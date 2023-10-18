@@ -13,8 +13,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v4.1.1
-        with:
-          ref: Android-13
 
       - name: Set up JDK
         uses: actions/setup-java@v3.13.0
@@ -33,6 +31,13 @@ jobs:
           PATH=~/bin:$PATH
           curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
           chmod a+x ~/bin/repo
+
+      - name: Download and Set Up Latest Repo
+        run: |
+         mkdir -p ~/bin
+          curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+          chmod a+x ~/bin/repo
+          echo "$HOME/bin" >> $GITHUB_PATH
 
       - name: Sync Source Code
         run: |

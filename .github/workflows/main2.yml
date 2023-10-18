@@ -1,0 +1,48 @@
+name: Build Recovery
+
+on:
+  push:
+    branches:
+      - main  # or whatever branch you want to build on push
+
+jobs:
+  build:
+    name: Build Recovery Image
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Set up JDK
+      uses: actions/setup-java@v2
+      with:
+        distribution: 'adopt'
+        java-version: '11'
+      
+    - name: Sync Android Source
+      run: |
+        mkdir -p ~/android/source
+        cd ~/android/source
+        repo init -u https://android.googlesource.com/platform/manifest -b android-11.0.0_r3  # change the URL and branch as per your Android version
+        repo sync -j$(nproc --all)
+        mv $GITHUB_WORKSPACE ~/android/source/device/google/lynx
+
+    - name: Setup Vendor Blobs
+      run: |
+        cd ~/android/source/device/google/lynx
+        ./extract-files.sh  # Might need adjustments if you require real device blobs or dummy blobs.
+
+    - name: Build Recovery
+      run: |
+        cd ~/android/source
+        source build/envsetup.sh
+        lunch lynx-eng  # or lunch ofox_lynx-eng based on your setup
+        mka recoveryimage
+
+    - name: Upload Recovery Image
+      uses: actions/upload-artifact@v2
+      with:
+        name: recovery.img
+        path: ~/android/source/out/target/product/lynx/recovery.img
+

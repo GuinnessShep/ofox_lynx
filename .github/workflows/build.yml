@@ -13,8 +13,6 @@ jobs:
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-        with:
-          ref: Android-13
 
       - name: Set up JDK
         uses: actions/setup-java@v2
@@ -25,7 +23,7 @@ jobs:
       - name: Setting up Environment
         run: |
           sudo apt-get update
-          sudo apt-get install -y libncurses5 libssl-dev bc bison build-essential zip curl unzip repo flex g++-multilib gcc-multilib gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk3.0-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev
+          sudo apt-get install -y libncurses5 libssl-dev bc bison build-essential zip curl unzip repo flex g++-multilib gcc-multilib gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev liblz4-tool libncurses5-dev libsdl1.2-dev libssl-dev libwxgtk*-dev libxml2 libxml2-utils lzop pngcrush rsync schedtool squashfs-tools xsltproc zip zlib1g-dev
 
       - name: Initialize Repo
         run: |

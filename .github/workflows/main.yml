@@ -43,9 +43,10 @@ jobs:
 
       - name: Sync Source Code
         run: |
+          PATH=~/bin:$PATH
           repo init -u https://android.googlesource.com/platform/manifest
           repo sync -j8
-
+          
       - name: Build Recovery Image
         run: |
           source build/envsetup.sh

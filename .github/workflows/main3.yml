@@ -1,0 +1,46 @@
+name: OrangeFox Recovery Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-20.04
+    env:
+      FOX_BUILD_DEVICE: <device_name> # Replace <device_name> with your device name
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Setup environment
+      run: |
+        sudo apt install git aria2 -y
+        git clone https://gitlab.com/OrangeFox/misc/scripts ~/scripts
+        sudo bash ~/scripts/setup/android_build_env.sh
+        sudo bash ~/scripts/setup/install_android_sdk.sh
+
+    - name: Sync OrangeFox sources
+      run: |
+        mkdir ~/OrangeFox_sync
+        git clone https://gitlab.com/OrangeFox/sync.git ~/OrangeFox_sync/sync
+        ./~/OrangeFox_sync/sync/orangefox_sync.sh --branch 12.1 --path ~/fox_12.1
+
+    - name: Place device trees and kernel
+      run: |
+        git clone https://gitlab.com/OrangeFox/device/lavender.git ~/fox_12.1/device/xiaomi/lavender
+
+    - name: Build recovery
+      run: |
+        /bin/bash
+        source ~/fox_12.1/build/envsetup.sh
+        export ALLOW_MISSING_DEPENDENCIES=true
+        export LC_ALL="C"
+        lunch twrp_<device>-eng && mka adbd recoveryimage
+
+    - name: Upload OrangeFox build
+      uses: actions/upload-artifact@v2
+      with:
+        name: OrangeFox-unofficial-${{ env.FOX_BUILD_DEVICE }}.img
+        path: ~/fox_12.1/out/target/product/${{ env.FOX_BUILD_DEVICE }}/OrangeFox-unofficial-${{ env.FOX_BUILD_DEVICE }}.img
+
